@@ -780,6 +780,25 @@ body {
     z-index: 100;
 }
 
+/* ===== MOBILE OVERLAY ===== */
+.mobile-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1500;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.mobile-overlay.show {
+    display: block;
+    opacity: 1;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
     .charts-row {
@@ -801,7 +820,13 @@ body {
     }
 
     .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 260px; /* Фиксированная ширина для мобильных */
         transform: translateX(-100%);
+        z-index: 2000; /* Выше всего остального */
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
     }
 
     .sidebar.open {
@@ -818,6 +843,7 @@ body {
 
     .mobile-menu-btn {
         display: block;
+        z-index: 1500;
     }
 
     .page-container {

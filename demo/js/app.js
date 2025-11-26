@@ -292,20 +292,53 @@ function switchPage(page) {
 function initMobileMenu() {
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
     const sidebar = document.querySelector('.sidebar');
+    const overlay = document.getElementById('mobileOverlay');
+    const navItems = document.querySelectorAll('.nav-item');
 
-    if (mobileMenuBtn) {
-        mobileMenuBtn.addEventListener('click', function() {
-            sidebar.classList.toggle('open');
-        });
+    if (!mobileMenuBtn || !sidebar || !overlay) return;
 
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', function(e) {
+    // Открыть/закрыть sidebar при клике на бургер
+    mobileMenuBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        toggleSidebar();
+    });
+
+    // Закрыть sidebar при клике на overlay
+    overlay.addEventListener('click', function() {
+        closeSidebar();
+    });
+
+    // Закрыть sidebar при клике на nav-item (только на мобильных)
+    navItems.forEach(item => {
+        item.addEventListener('click', function() {
             if (window.innerWidth <= 768) {
-                if (!sidebar.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
-                    sidebar.classList.remove('open');
-                }
+                closeSidebar();
             }
         });
+    });
+
+    // Функция переключения sidebar
+    function toggleSidebar() {
+        const isOpen = sidebar.classList.contains('open');
+        if (isOpen) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
+    }
+
+    // Функция открытия sidebar
+    function openSidebar() {
+        sidebar.classList.add('open');
+        overlay.classList.add('show');
+        document.body.style.overflow = 'hidden'; // Блокируем скролл
+    }
+
+    // Функция закрытия sidebar
+    function closeSidebar() {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('show');
+        document.body.style.overflow = ''; // Разблокируем скролл
     }
 }
 
