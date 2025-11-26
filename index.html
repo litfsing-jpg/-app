@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Automation System - Demo Dashboard</title>
+    <link rel="stylesheet" href="demo/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fas fa-robot"></i>
+            <span>Content AI</span>
+        </div>
+        <nav class="nav-menu">
+            <a href="#" class="nav-item active" data-page="overview">
+                <i class="fas fa-th-large"></i>
+                <span>Overview</span>
+            </a>
+            <a href="#" class="nav-item" data-page="content">
+                <i class="fas fa-file-alt"></i>
+                <span>Content</span>
+            </a>
+            <a href="#" class="nav-item" data-page="accounts">
+                <i class="fas fa-users"></i>
+                <span>Accounts</span>
+            </a>
+            <a href="#" class="nav-item" data-page="analytics">
+                <i class="fas fa-chart-line"></i>
+                <span>Analytics</span>
+            </a>
+            <a href="#" class="nav-item" data-page="campaigns">
+                <i class="fas fa-bullhorn"></i>
+                <span>Campaigns</span>
+            </a>
+            <a href="#" class="nav-item" data-page="jarvis">
+                <i class="fas fa-microphone"></i>
+                <span>Jarvis AI</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="avatar">JD</div>
+                <div class="user-info">
+                    <div class="user-name">John Doe</div>
+                    <div class="user-status">Premium</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 id="pageTitle">Dashboard Overview</h1>
+            </div>
+            <div class="header-right">
+                <button class="icon-btn" id="notificationBtn">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">3</span>
+                </button>
+                <button class="icon-btn" id="settingsBtn">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Page Container -->
+        <div class="page-container" id="pageContainer">
+            <!-- Overview Page -->
+            <div class="page active" id="overview-page">
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">Total Views</div>
+                            <div class="stat-value">2.4M</div>
+                            <div class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i> 12.5%
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">Active Accounts</div>
+                            <div class="stat-value">47</div>
+                            <div class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i> 8.2%
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">Revenue</div>
+                            <div class="stat-value">$12,450</div>
+                            <div class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i> 23.1%
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">Conversion Rate</div>
+                            <div class="stat-value">3.8%</div>
+                            <div class="stat-change negative">
+                                <i class="fas fa-arrow-down"></i> 1.2%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="charts-row">
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h3>Revenue Overview</h3>
+                            <select class="time-filter">
+                                <option>Last 7 days</option>
+                                <option>Last 30 days</option>
+                                <option>Last 90 days</option>
+                            </select>
+                        </div>
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h3>Platform Performance</h3>
+                        </div>
+                        <canvas id="platformChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="activity-card">
+                    <div class="card-header">
+                        <h3>Recent Activity</h3>
+                        <a href="#" class="view-all">View All</a>
+                    </div>
+                    <div class="activity-list" id="activityList">
+                        <!-- Will be populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Page -->
+            <div class="page" id="content-page">
+                <div class="page-header">
+                    <h2>Content Management</h2>
+                    <button class="btn btn-primary" id="generateContentBtn">
+                        <i class="fas fa-plus"></i> Generate Content
+                    </button>
+                </div>
+                <div class="content-grid" id="contentGrid">
+                    <!-- Will be populated by JS -->
+                </div>
+            </div>
+
+            <!-- Accounts Page -->
+            <div class="page" id="accounts-page">
+                <div class="page-header">
+                    <h2>Social Media Accounts</h2>
+                    <button class="btn btn-primary" id="addAccountBtn">
+                        <i class="fas fa-plus"></i> Add Account
+                    </button>
+                </div>
+                <div class="accounts-grid" id="accountsGrid">
+                    <!-- Will be populated by JS -->
+                </div>
+            </div>
+
+            <!-- Analytics Page -->
+            <div class="page" id="analytics-page">
+                <div class="page-header">
+                    <h2>Analytics Dashboard</h2>
+                    <div class="filter-group">
+                        <select class="filter-select">
+                            <option>All Platforms</option>
+                            <option>YouTube</option>
+                            <option>TikTok</option>
+                            <option>Twitter</option>
+                        </select>
+                        <select class="filter-select">
+                            <option>Last 30 days</option>
+                            <option>Last 90 days</option>
+                            <option>Last 12 months</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="analytics-container">
+                    <canvas id="analyticsChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Campaigns Page -->
+            <div class="page" id="campaigns-page">
+                <div class="page-header">
+                    <h2>Marketing Campaigns</h2>
+                    <button class="btn btn-primary" id="createCampaignBtn">
+                        <i class="fas fa-plus"></i> Create Campaign
+                    </button>
+                </div>
+                <div class="campaigns-grid" id="campaignsGrid">
+                    <!-- Will be populated by JS -->
+                </div>
+            </div>
+
+            <!-- Jarvis AI Page -->
+            <div class="page" id="jarvis-page">
+                <div class="jarvis-container">
+                    <div class="jarvis-header">
+                        <div class="jarvis-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h2>Jarvis AI Assistant</h2>
+                        <p>Your intelligent business companion</p>
+                    </div>
+
+                    <div class="chat-container" id="chatContainer">
+                        <div class="chat-message assistant">
+                            <div class="message-avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="message-content">
+                                <p>Hello! I'm Jarvis, your AI assistant. I can help you with analytics, content strategy, and campaign optimization. How can I assist you today?</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chat-input-container">
+                        <button class="voice-btn" id="voiceBtn">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                        <input type="text" class="chat-input" id="chatInput" placeholder="Ask Jarvis anything...">
+                        <button class="send-btn" id="sendBtn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+
+                    <div class="quick-actions">
+                        <button class="quick-action-btn" data-query="Show me today's performance">
+                            <i class="fas fa-chart-line"></i> Today's Performance
+                        </button>
+                        <button class="quick-action-btn" data-query="Which platform is performing best?">
+                            <i class="fas fa-trophy"></i> Best Platform
+                        </button>
+                        <button class="quick-action-btn" data-query="Generate content ideas">
+                            <i class="fas fa-lightbulb"></i> Content Ideas
+                        </button>
+                        <button class="quick-action-btn" data-query="Show revenue breakdown">
+                            <i class="fas fa-dollar-sign"></i> Revenue Breakdown
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Demo Banner -->
+    <div class="demo-banner">
+        <i class="fas fa-info-circle"></i>
+        <span>This is a demo version with mock data. Full system includes AI generation, multi-platform publishing, and real-time analytics.</span>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="demo/js/app.js"></script>
+</body>
+</html>
