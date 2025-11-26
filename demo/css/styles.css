@@ -317,6 +317,14 @@ body {
     border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 24px;
+    height: 400px; /* ФИКСИРОВАННАЯ ВЫСОТА */
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-card canvas {
+    max-height: 300px !important; /* ОГРАНИЧИВАЕМ ВЫСОТУ ГРАФИКА */
+    width: 100% !important;
 }
 
 .card-header {
@@ -777,6 +785,14 @@ body {
     .charts-row {
         grid-template-columns: 1fr;
     }
+
+    .chart-card {
+        height: 350px; /* Меньше высота на планшетах */
+    }
+
+    .chart-card canvas {
+        max-height: 250px !important;
+    }
 }
 
 @media (max-width: 768px) {
@@ -827,6 +843,22 @@ body {
 
     .quick-actions {
         grid-template-columns: 1fr;
+    }
+
+    .chart-card {
+        height: 300px; /* Еще меньше на мобильных */
+    }
+
+    .chart-card canvas {
+        max-height: 200px !important;
+    }
+
+    .analytics-container {
+        height: 400px;
+    }
+
+    .analytics-container canvas {
+        max-height: 320px !important;
     }
 }
 
@@ -905,5 +937,10 @@ body {
     border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 24px;
-    min-height: 500px;
+    height: 500px; /* ФИКСИРОВАННАЯ ВЫСОТА */
+}
+
+.analytics-container canvas {
+    max-height: 420px !important; /* ОГРАНИЧИВАЕМ ВЫСОТУ ГРАФИКА */
+    width: 100% !important;
 }
