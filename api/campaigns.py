@@ -38,14 +38,19 @@ class handler(BaseHTTPRequestHandler):
                 "method": "get",
                 "params": {
                     "SelectionCriteria": {},
-                    "FieldNames": ["Id", "Name", "Status", "State", "Statistics"]
+                    "FieldNames": ["Id", "Name", "Status", "State"]
                 }
             }
 
             response = requests.post(url, headers=headers, json=payload, timeout=10)
 
+            # Debug: print response for logging
+            print(f"Yandex API Status: {response.status_code}")
+            print(f"Yandex API Response: {response.text[:500]}")
+
             if response.status_code == 200:
                 data = response.json()
+                print(f"Parsed data: {json.dumps(data, ensure_ascii=False)[:500]}")
                 campaigns = data.get("result", {}).get("Campaigns", [])
 
                 self.send_response(200)
