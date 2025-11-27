@@ -282,6 +282,7 @@ function switchPage(page) {
         'accounts': 'Social Media Accounts',
         'analytics': 'Analytics Dashboard',
         'campaigns': 'Marketing Campaigns',
+        'yandex-direct': 'Яндекс.Директ',
         'jarvis': 'Jarvis AI Assistant'
     };
 

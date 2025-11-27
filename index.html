@@ -38,6 +38,10 @@
                 <i class="fas fa-bullhorn"></i>
                 <span>Campaigns</span>
             </a>
+            <a href="#" class="nav-item" data-page="yandex-direct">
+                <i class="fab fa-yandex"></i>
+                <span>Yandex Direct</span>
+            </a>
             <a href="#" class="nav-item" data-page="jarvis">
                 <i class="fas fa-microphone"></i>
                 <span>Jarvis AI</span>
@@ -226,6 +230,152 @@
                 </div>
             </div>
 
+            <!-- Yandex Direct Page -->
+            <div class="page" id="yandex-direct-page">
+                <div class="page-header">
+                    <h2>Яндекс.Директ</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" id="refreshYandexBtn">
+                            <i class="fas fa-sync"></i> Обновить
+                        </button>
+                        <button class="btn btn-primary" id="exportYandexBtn">
+                            <i class="fas fa-download"></i> Экспорт
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="yandex-stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">Показы</div>
+                            <div class="stat-value" id="ydImpressions">0</div>
+                            <div class="stat-change" id="ydImpressionsChange">
+                                <i class="fas fa-minus"></i> 0%
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <i class="fas fa-mouse-pointer"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">Клики</div>
+                            <div class="stat-value" id="ydClicks">0</div>
+                            <div class="stat-change" id="ydClicksChange">
+                                <i class="fas fa-minus"></i> 0%
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon purple">
+                            <i class="fas fa-ruble-sign"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">Расход</div>
+                            <div class="stat-value" id="ydCost">0 ₽</div>
+                            <div class="stat-change" id="ydCostChange">
+                                <i class="fas fa-minus"></i> 0%
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon orange">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">CTR</div>
+                            <div class="stat-value" id="ydCtr">0%</div>
+                            <div class="stat-change" id="ydCtrChange">
+                                <i class="fas fa-minus"></i> 0%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chart -->
+                <div class="chart-card yandex-chart">
+                    <div class="card-header">
+                        <h3>Динамика показателей</h3>
+                        <select class="time-filter" id="ydTimeFilter">
+                            <option value="7">Последние 7 дней</option>
+                            <option value="30" selected>Последние 30 дней</option>
+                            <option value="90">Последние 90 дней</option>
+                        </select>
+                    </div>
+                    <canvas id="yandexChart"></canvas>
+                </div>
+
+                <!-- Campaigns Table -->
+                <div class="yandex-campaigns-card">
+                    <div class="card-header">
+                        <h3>Кампании</h3>
+                        <div class="table-controls">
+                            <input type="text" class="search-input" id="ydSearchInput" placeholder="Поиск...">
+                            <select class="filter-select" id="ydStatusFilter">
+                                <option value="all">Все статусы</option>
+                                <option value="ON">Активные</option>
+                                <option value="OFF">Остановлены</option>
+                                <option value="SUSPENDED">Приостановлены</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="yandex-table" id="yandexTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Название кампании</th>
+                                    <th>Статус</th>
+                                    <th>Показы</th>
+                                    <th>Клики</th>
+                                    <th>CTR</th>
+                                    <th>Расход</th>
+                                    <th>Ср. CPC</th>
+                                    <th>Конверсии</th>
+                                    <th>CR</th>
+                                </tr>
+                            </thead>
+                            <tbody id="yandexTableBody">
+                                <tr>
+                                    <td colspan="10" class="loading-row">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        Загрузка данных...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Connection Setup Notice (показывается если нет токена) -->
+                <div class="setup-notice" id="ydSetupNotice" style="display: none;">
+                    <div class="setup-icon">
+                        <i class="fas fa-plug"></i>
+                    </div>
+                    <h3>Подключите Яндекс.Директ</h3>
+                    <p>Для отображения статистики необходимо подключить ваш кабинет Яндекс.Директ</p>
+                    <button class="btn btn-primary" id="connectYandexBtn">
+                        <i class="fab fa-yandex"></i> Подключить
+                    </button>
+                    <div class="setup-steps">
+                        <p><strong>Как подключить:</strong></p>
+                        <ol>
+                            <li>Получите OAuth токен в <a href="https://oauth.yandex.ru/" target="_blank">Яндекс.OAuth</a></li>
+                            <li>Скопируйте ваш токен доступа</li>
+                            <li>Вставьте токен в настройки приложения</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
             <!-- Jarvis AI Page -->
             <div class="page" id="jarvis-page">
                 <div class="jarvis-container">
@@ -286,5 +436,6 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="demo/js/app.js"></script>
+    <script src="demo/js/yandex-direct.js"></script>
 </body>
 </html>
