@@ -15,9 +15,5 @@
       "src": "/(.*)",
       "dest": "/$1"
     }
-  ],
-  "env": {
-    "YANDEX_DIRECT_TOKEN": "@yandex-direct-token",
-    "YANDEX_DIRECT_LOGIN": "@yandex-direct-login"
-  }
+  ]
 }
