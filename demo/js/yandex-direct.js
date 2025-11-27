@@ -125,12 +125,75 @@ function initYandexDirect() {
     }
 }
 
-function loadYandexData() {
-    // Загружаем статистику
-    updateYandexStats(yandexMockData.stats);
+async function loadYandexData() {
+    // Определяем, где мы запущены (production Vercel или local)
+    const isProduction = window.location.hostname !== 'localhost' &&
+                        window.location.hostname !== '127.0.0.1' &&
+                        !window.location.hostname.includes('github.io');
 
-    // Загружаем таблицу кампаний
-    updateYandexTable(yandexMockData.campaigns);
+    if (isProduction) {
+        try {
+            // Показываем индикатор загрузки
+            showLoadingIndicator();
+
+            // Загружаем реальные данные из API
+            const [statsResponse, campaignsResponse] = await Promise.all([
+                fetch('/api/stats'),
+                fetch('/api/campaigns')
+            ]);
+
+            if (statsResponse.ok && campaignsResponse.ok) {
+                const statsData = await statsResponse.json();
+                const campaignsData = await campaignsResponse.json();
+
+                if (statsData.success && campaignsData.success) {
+                    // Преобразуем данные в формат нашего UI
+                    const stats = {
+                        impressions: statsData.stats.total_impressions,
+                        clicks: statsData.stats.total_clicks,
+                        cost: statsData.stats.total_cost,
+                        ctr: statsData.stats.avg_ctr,
+                        avgCpc: statsData.stats.avg_cpc,
+                        conversions: statsData.stats.total_conversions,
+                        conversionRate: statsData.stats.conversion_rate
+                    };
+
+                    // Преобразуем кампании
+                    const campaigns = campaignsData.campaigns.map(c => ({
+                        id: c.Id,
+                        name: c.Name,
+                        status: c.Status,
+                        impressions: c.Statistics?.Impressions || 0,
+                        clicks: c.Statistics?.Clicks || 0,
+                        ctr: c.Statistics?.Ctr || 0,
+                        cost: c.Statistics?.Cost || 0,
+                        avgCpc: c.Statistics?.AvgCpc || 0,
+                        conversions: c.Statistics?.Conversions || 0,
+                        conversionRate: c.Statistics?.ConversionRate || 0
+                    }));
+
+                    updateYandexStats(stats);
+                    updateYandexTable(campaigns);
+                    hideLoadingIndicator();
+                    return;
+                }
+            }
+
+            // Если что-то не так с API, используем mock данные
+            throw new Error('API returned invalid data');
+
+        } catch (error) {
+            console.warn('Failed to load real data, using mock data:', error);
+            hideLoadingIndicator();
+            // Fallback к mock данным
+            updateYandexStats(yandexMockData.stats);
+            updateYandexTable(yandexMockData.campaigns);
+        }
+    } else {
+        // В режиме разработки используем mock данные
+        updateYandexStats(yandexMockData.stats);
+        updateYandexTable(yandexMockData.campaigns);
+    }
 }
 
 function updateYandexStats(stats) {
@@ -451,6 +514,34 @@ function formatNumber(num) {
 function formatDate(dateString) {
     const date = new Date(dateString);
     return date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' });
+}
+
+function showLoadingIndicator() {
+    const statsGrid = document.querySelector('.yandex-stats-grid');
+    const table = document.querySelector('.yandex-campaigns-card');
+
+    if (statsGrid) {
+        statsGrid.style.opacity = '0.5';
+        statsGrid.style.pointerEvents = 'none';
+    }
+    if (table) {
+        table.style.opacity = '0.5';
+        table.style.pointerEvents = 'none';
+    }
+}
+
+function hideLoadingIndicator() {
+    const statsGrid = document.querySelector('.yandex-stats-grid');
+    const table = document.querySelector('.yandex-campaigns-card');
+
+    if (statsGrid) {
+        statsGrid.style.opacity = '1';
+        statsGrid.style.pointerEvents = 'auto';
+    }
+    if (table) {
+        table.style.opacity = '1';
+        table.style.pointerEvents = 'auto';
+    }
 }
 
 // ===== NAVIGATION UPDATE =====
