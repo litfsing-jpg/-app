@@ -344,7 +344,7 @@ if __name__ == "__main__":
     # Получи токен и логин из переменных окружения или конфига
     # ВАЖНО: Замени на свои значения!
     ACCESS_TOKEN = os.getenv("YANDEX_DIRECT_TOKEN", "y0__xCp7sHEAxjO8jsgo6bhshWsrA5ZdgQApJVAbUcp2p-dluCANQ")
-    LOGIN = os.getenv("YANDEX_DIRECT_LOGIN", "your-login")  # <-- Вставь свой логин Яндекса (например: ivan.petrov)
+    LOGIN = os.getenv("YANDEX_DIRECT_LOGIN", "getuniq-u78912-1")
 
     # Создаём клиент (is_sandbox=True для тестирования)
     client = YandexDirectAPI(
