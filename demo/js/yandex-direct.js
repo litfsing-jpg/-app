@@ -127,9 +127,10 @@ function initYandexDirect() {
 
 async function loadYandexData() {
     // API URL - автоматически определяем backend
-    const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-        ? 'http://localhost:8000/api/yandex-direct'
-        : '/api/yandex-direct';
+    // Для локальной разработки используем FastAPI backend
+    // Для Vercel production используем serverless functions
+    const isLocalDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const API_BASE_URL = isLocalDev ? 'http://localhost:8000/api/yandex-direct' : '/api';
 
     try {
         // Показываем индикатор загрузки
@@ -145,36 +146,53 @@ async function loadYandexData() {
             const statsData = await statsResponse.json();
             const campaignsData = await campaignsResponse.json();
 
-            // Преобразуем данные в формат нашего UI
-            const stats = {
-                impressions: statsData.total_impressions || 0,
-                clicks: statsData.total_clicks || 0,
-                cost: statsData.total_cost || 0,
-                ctr: statsData.avg_ctr || 0,
-                avgCpc: statsData.avg_cpc || 0,
-                conversions: statsData.total_conversions || 0,
-                conversionRate: statsData.conversion_rate || 0
-            };
+            // Проверяем формат ответа (разные для local и Vercel)
+            let stats, campaigns;
+
+            if (statsData.success) {
+                // Vercel serverless format
+                stats = {
+                    impressions: statsData.stats.total_impressions || 0,
+                    clicks: statsData.stats.total_clicks || 0,
+                    cost: statsData.stats.total_cost || 0,
+                    ctr: statsData.stats.avg_ctr || 0,
+                    avgCpc: statsData.stats.avg_cpc || 0,
+                    conversions: statsData.stats.total_conversions || 0,
+                    conversionRate: statsData.stats.conversion_rate || 0
+                };
+            } else {
+                // FastAPI format (local development)
+                stats = {
+                    impressions: statsData.total_impressions || 0,
+                    clicks: statsData.total_clicks || 0,
+                    cost: statsData.total_cost || 0,
+                    ctr: statsData.avg_ctr || 0,
+                    avgCpc: statsData.avg_cpc || 0,
+                    conversions: statsData.total_conversions || 0,
+                    conversionRate: statsData.conversion_rate || 0
+                };
+            }
 
             // Преобразуем кампании из Yandex Direct формата
-            const campaigns = campaignsData.campaigns.map(c => ({
+            const campaignsArray = campaignsData.success ? campaignsData.campaigns : campaignsData.campaigns || [];
+            campaigns = campaignsArray.map(c => ({
                 id: c.Id,
                 name: c.Name,
                 status: c.Status,
-                impressions: 0, // Для детальной статистики потребуется отдельный запрос
-                clicks: 0,
-                ctr: 0,
-                cost: 0,
-                avgCpc: 0,
-                conversions: 0,
-                conversionRate: 0
+                impressions: c.Statistics?.Impressions || 0,
+                clicks: c.Statistics?.Clicks || 0,
+                ctr: c.Statistics?.Ctr || 0,
+                cost: c.Statistics?.Cost || 0,
+                avgCpc: c.Statistics?.AvgCpc || 0,
+                conversions: c.Statistics?.Conversions || 0,
+                conversionRate: c.Statistics?.ConversionRate || 0
             }));
 
             updateYandexStats(stats);
             updateYandexTable(campaigns);
             hideLoadingIndicator();
 
-            console.log('✅ Данные загружены из Yandex Direct API');
+            console.log(`✅ Данные загружены из Yandex Direct API (${isLocalDev ? 'Local' : 'Vercel'})`);
             return;
         }
 
