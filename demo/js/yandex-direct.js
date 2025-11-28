@@ -126,71 +126,84 @@ function initYandexDirect() {
 }
 
 async function loadYandexData() {
-    // Определяем, где мы запущены (production Vercel или local)
-    const isProduction = window.location.hostname !== 'localhost' &&
-                        window.location.hostname !== '127.0.0.1' &&
-                        !window.location.hostname.includes('github.io');
+    // API URL - автоматически определяем backend
+    // Для локальной разработки используем FastAPI backend
+    // Для Vercel production используем serverless functions
+    const isLocalDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const API_BASE_URL = isLocalDev ? 'http://localhost:8000/api/yandex-direct' : '/api';
 
-    if (isProduction) {
-        try {
-            // Показываем индикатор загрузки
-            showLoadingIndicator();
+    try {
+        // Показываем индикатор загрузки
+        showLoadingIndicator();
 
-            // Загружаем реальные данные из API
-            const [statsResponse, campaignsResponse] = await Promise.all([
-                fetch('/api/stats'),
-                fetch('/api/campaigns')
-            ]);
+        // Загружаем реальные данные из API
+        const [statsResponse, campaignsResponse] = await Promise.all([
+            fetch(`${API_BASE_URL}/stats`),
+            fetch(`${API_BASE_URL}/campaigns`)
+        ]);
 
-            if (statsResponse.ok && campaignsResponse.ok) {
-                const statsData = await statsResponse.json();
-                const campaignsData = await campaignsResponse.json();
+        if (statsResponse.ok && campaignsResponse.ok) {
+            const statsData = await statsResponse.json();
+            const campaignsData = await campaignsResponse.json();
 
-                if (statsData.success && campaignsData.success) {
-                    // Преобразуем данные в формат нашего UI
-                    const stats = {
-                        impressions: statsData.stats.total_impressions,
-                        clicks: statsData.stats.total_clicks,
-                        cost: statsData.stats.total_cost,
-                        ctr: statsData.stats.avg_ctr,
-                        avgCpc: statsData.stats.avg_cpc,
-                        conversions: statsData.stats.total_conversions,
-                        conversionRate: statsData.stats.conversion_rate
-                    };
+            // Проверяем формат ответа (разные для local и Vercel)
+            let stats, campaigns;
 
-                    // Преобразуем кампании
-                    const campaigns = campaignsData.campaigns.map(c => ({
-                        id: c.Id,
-                        name: c.Name,
-                        status: c.Status,
-                        impressions: c.Statistics?.Impressions || 0,
-                        clicks: c.Statistics?.Clicks || 0,
-                        ctr: c.Statistics?.Ctr || 0,
-                        cost: c.Statistics?.Cost || 0,
-                        avgCpc: c.Statistics?.AvgCpc || 0,
-                        conversions: c.Statistics?.Conversions || 0,
-                        conversionRate: c.Statistics?.ConversionRate || 0
-                    }));
-
-                    updateYandexStats(stats);
-                    updateYandexTable(campaigns);
-                    hideLoadingIndicator();
-                    return;
-                }
+            if (statsData.success) {
+                // Vercel serverless format
+                stats = {
+                    impressions: statsData.stats.total_impressions || 0,
+                    clicks: statsData.stats.total_clicks || 0,
+                    cost: statsData.stats.total_cost || 0,
+                    ctr: statsData.stats.avg_ctr || 0,
+                    avgCpc: statsData.stats.avg_cpc || 0,
+                    conversions: statsData.stats.total_conversions || 0,
+                    conversionRate: statsData.stats.conversion_rate || 0
+                };
+            } else {
+                // FastAPI format (local development)
+                stats = {
+                    impressions: statsData.total_impressions || 0,
+                    clicks: statsData.total_clicks || 0,
+                    cost: statsData.total_cost || 0,
+                    ctr: statsData.avg_ctr || 0,
+                    avgCpc: statsData.avg_cpc || 0,
+                    conversions: statsData.total_conversions || 0,
+                    conversionRate: statsData.conversion_rate || 0
+                };
             }
 
-            // Если что-то не так с API, используем mock данные
-            throw new Error('API returned invalid data');
+            // Преобразуем кампании из Yandex Direct формата
+            const campaignsArray = campaignsData.success ? campaignsData.campaigns : campaignsData.campaigns || [];
+            campaigns = campaignsArray.map(c => ({
+                id: c.Id,
+                name: c.Name,
+                status: c.Status,
+                impressions: c.Statistics?.Impressions || 0,
+                clicks: c.Statistics?.Clicks || 0,
+                ctr: c.Statistics?.Ctr || 0,
+                cost: c.Statistics?.Cost || 0,
+                avgCpc: c.Statistics?.AvgCpc || 0,
+                conversions: c.Statistics?.Conversions || 0,
+                conversionRate: c.Statistics?.ConversionRate || 0
+            }));
 
-        } catch (error) {
-            console.warn('Failed to load real data, using mock data:', error);
+            updateYandexStats(stats);
+            updateYandexTable(campaigns);
             hideLoadingIndicator();
-            // Fallback к mock данным
-            updateYandexStats(yandexMockData.stats);
-            updateYandexTable(yandexMockData.campaigns);
+
+            console.log(`✅ Данные загружены из Yandex Direct API (${isLocalDev ? 'Local' : 'Vercel'})`);
+            return;
         }
-    } else {
-        // В режиме разработки используем mock данные
+
+        // Если API не отвечает, используем mock данные
+        throw new Error('API не доступен');
+
+    } catch (error) {
+        console.warn('⚠️ Не удалось загрузить данные из API, используются демо-данные:', error.message);
+        hideLoadingIndicator();
+
+        // Fallback к mock данным
         updateYandexStats(yandexMockData.stats);
         updateYandexTable(yandexMockData.campaigns);
     }
