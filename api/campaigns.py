@@ -38,7 +38,7 @@ class handler(BaseHTTPRequestHandler):
                 "method": "get",
                 "params": {
                     "SelectionCriteria": {},
-                    "FieldNames": ["Id", "Name", "Status", "State", "Statistics"]
+                    "FieldNames": ["Id", "Name", "Status", "State"]
                 }
             }
 
